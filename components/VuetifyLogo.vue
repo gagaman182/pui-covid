@@ -1,19 +1,18 @@
 <template>
-  <!-- <img class="VuetifyLogo" alt="Vuetify Logo" src="/vuetify-logo.svg" /> -->
-  <img src="@/assets/logo_old.jpg" alt="John" />
+  <!-- <img src="@/assets/logo_old.jpg" alt="John" /> -->
+  <div align="center">
+    <v-img
+      src="http://61.19.25.207/pui-covid19/assets/logo_old.jpg"
+      max-height="150"
+      max-width="400"
+    ></v-img>
+  </div>
+  <!-- <v-img
+    lazy-src="https://picsum.photos/id/11/10/6"
+    max-height="150"
+    max-width="250"
+    src="https://picsum.photos/id/11/500/300"
+  ></v-img> -->
 </template>
 
-<style>
-.VuetifyLogo {
-  height: 180px;
-  width: 180px;
-  transform: rotateY(560deg);
-  animation: turn 3.5s ease-out forwards 1s;
-}
-
-@keyframes turn {
-  100% {
-    transform: rotateY(0deg);
-  }
-}
-</style>
+<style></style>

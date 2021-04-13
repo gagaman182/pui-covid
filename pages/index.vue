@@ -1,10 +1,10 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12">
-      <div class="text-center">
-        <vuetify-logo />
-      </div>
       <v-card>
+        <v-col cols="12" md="12">
+          <vuetify-logo />
+        </v-col>
         <div align="center">
           <v-alert color="#51c4d3" dark>
             <p class="headline">
@@ -156,6 +156,7 @@
                   label="มาจากพื้นที่เสี่ยง/พื้นที่สีแดง"
                   color="red"
                   value="Y"
+                  :rules="redaddressRules"
                   @change="checkred()"
                 ></v-checkbox
               ></v-col>
@@ -166,6 +167,7 @@
                   name="input-7-4"
                   label="ระบุ..."
                   v-model="redaddress_other"
+                  :rules="redaddress_otherRules"
                   :disabled="redDisable"
                 ></v-textarea>
               </v-col>
@@ -179,6 +181,7 @@
                   label="สัมผัสใกล้ชิดกับผู้ป่วยที่ยืนยันเป็น Covid19 (ให้ระบุชื่อผู้ป่วยที่ยืนยันผล เหตุการณ์ที่ไหน)"
                   color="red"
                   value="Y"
+                  :rules="contactRules"
                   @change="checkcontact()"
                 ></v-checkbox
               ></v-col>
@@ -190,6 +193,7 @@
                   label=" เช่น สถานบันเทิงชื่ออะไร วัน เวลา ที่ชัดเจน"
                   v-model="contact_other"
                   :disabled="contactDisable"
+                  :rules="contact_otherRules"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -210,6 +214,7 @@
 import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import axios from 'axios'
 export default {
+  name: 'index',
   components: {
     VuetifyLogo,
   },
@@ -256,7 +261,12 @@ export default {
     subdistrictRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
     districtRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
     provinceRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
+    redaddressRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
+    redaddress_otherRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
+    contactRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
+    contact_otherRules: [(v) => !!v || 'ยังไม่ได้ระบุข้อมูล'],
   }),
+
   methods: {
     checkred() {
       if (this.redaddress == 'Y') {
@@ -329,6 +339,7 @@ export default {
               icon: 'success',
               confirmButtonText: 'ตกลง',
             })
+            this.clearform()
           } else {
             this.$swal({
               title: 'ไม่สามารถเพิ่มข้อมูลได้',
@@ -338,6 +349,28 @@ export default {
             })
           }
         })
+    },
+    clearform() {
+      this.prename = ''
+      this.name = ''
+      this.lastname = ''
+      this.idcard = ''
+      this.birth = ''
+      this.age = ''
+      this.tel = ''
+      this.address = ''
+      this.road = ''
+      this.soi = ''
+      this.moo = ''
+      this.subdistrict = ''
+      this.district = ''
+      this.province = ''
+      this.redaddress = ''
+      this.redaddress_other = ''
+      this.contact = ''
+      this.contact_other = ''
+      this.$refs.form.reset()
+      window.scrollTo(0, 0)
     },
   },
 }
