@@ -30,7 +30,7 @@ DATE_FORMAT(date_add,'%d-%m-%Y %T') as 'เวลาที่บันทึก'
 
 FROM
  pui
- order by date_add desc
+
  ";
 
 

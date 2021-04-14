@@ -1,21 +1,72 @@
 <template>
   <v-row>
-    <v-col>
-      <div>
-        <v-alert color="#949cdf" dark>
+    <v-col cols="12" md="12">
+      <div align="center">
+        <v-alert color="#8fd9a8" dark>
           <p class="headline">
             แสดงข้อมูลทะเบียนรับแจ้งเพื่อรายงานตัวเข้ารับการตรวจหาเชื้อในกลุ่มเสี่ยงสูง(PUI
             / COVID-19) โรงพยาบาลหาดใหญ่
           </p>
         </v-alert>
-      </div>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn color="#51c4d3" dark x-large
-          ><export-excel :data="desserts_thai"> Excel </export-excel>
-        </v-btn>
-      </v-card-actions>
-
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="#51c4d3" dark x-large
+            ><export-excel :data="desserts_thai">
+              <v-icon medium>mdi-file-excel </v-icon>
+            </export-excel>
+          </v-btn>
+        </v-card-actions>
+      </div></v-col
+    >
+    <v-col cols="12" md="4">
+      <v-menu
+        v-model="fromDateMenu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            prepend-inner-icon="mdi-calendar-range "
+            label="ระบุวันที่..."
+            readonly
+            :value="fromDateDisp"
+            v-on="on"
+            v-model="datecontactstring"
+            outlined
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="datecontact"
+          no-title
+          @input="fromDateMenu = false"
+          locale="th-TH"
+        ></v-date-picker> </v-menu
+    ></v-col>
+    <v-col cols="12" md="1"
+      ><v-btn color="#ff75a0" dark x-large @click="searchtable">
+        <v-icon medium>mdi-table-search </v-icon>
+      </v-btn></v-col
+    >
+    <v-col cols="12" md="1"
+      ><v-btn color="#4a47a3" dark x-large @click="reload">
+        <v-icon medium>mdi-reload </v-icon>
+      </v-btn></v-col
+    >
+    <v-col cols="12" md="6" align="end"
+      ><p class="display-1 red--text">
+        ข้อมูลผู้สัมผัส {{ desserts.length }} ราย
+      </p>
+    </v-col>
+    <v-col cols="12" :md="coltable">
+      <v-app-bar color="#4b778d" dense dark>
+        <v-toolbar-title
+          ><v-icon medium>mdi-table-account </v-icon
+          >&nbsp;ตารางข้อมูล</v-toolbar-title
+        >
+      </v-app-bar>
       <v-data-table
         height="600px"
         :headers="headers"
@@ -23,6 +74,7 @@
         :items-per-page="15"
         class="elevation-1"
         :search="search"
+        @click:row="handleClick"
         ><template v-slot:top>
           <v-text-field
             v-model="search"
@@ -31,21 +83,197 @@
           ></v-text-field> </template
       ></v-data-table>
     </v-col>
+
+    <v-col v-if="showdetail" cols="12" :md="coldetail" style="overflow: auto">
+      <v-card color="#8e7f7f" dark>
+        <v-row>
+          <v-col cols="12" md="6"
+            ><v-card-title primary class="title orange--text"
+              ><v-icon medium>mdi-shield-account </v-icon
+              >&nbsp;รายละเอียดบุคคล</v-card-title
+            ></v-col
+          >
+          <v-col cols="12" md="6" align="end">
+            <v-btn
+              :loading="loading"
+              x-large
+              class="ma-1"
+              color="#be0000"
+              @click="close"
+            >
+              <v-icon medium>mdi-close-outline </v-icon>
+            </v-btn></v-col
+          >
+        </v-row>
+
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >ชื่อ-นามสกุล</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].fullname
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >หมายเลขบัตรประจำตัวประชาชน</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].idcard
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >วันเกิด</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].birth
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="2"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >อายุ</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].age
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >เบอร์โทรศัพท์</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].tel
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >บ้านเลขที่</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].address
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >ถนน</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].road
+              }}</v-card-title></v-col
+            >
+
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >ซอย</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].soi
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >หมู่</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].moo
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >ตำบล</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].subdistrict
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >อำเภอ</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].road
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="3"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >จังหวัด</v-card-subtitle
+              >
+              <v-card-title class="headline">{{
+                pui_detail[0].province
+              }}</v-card-title></v-col
+            >
+
+            <v-col cols="12" md="12"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >มาจากพื้นที่เสี่ยง/พื้นที่สีแดง</v-card-subtitle
+              >
+              <v-card-title class="subheadline">{{
+                pui_detail[0].redaddress_other ,
+              }}</v-card-title></v-col
+            >
+            <v-col cols="12" md="12"
+              ><v-card-subtitle class="text-decoration-underline orange--text"
+                >สัมมผัสใกล้ชิดกับผู้ป่วยที่ยืนยันเป็น Covid19</v-card-subtitle
+              >
+              <v-card-title class="subheadline">{{
+                pui_detail[0].contact_other ,
+              }}</v-card-title></v-col
+            >
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-col>
+
+    <v-dialog v-model="dialog" hide-overlay persistent width="300">
+      <v-card color="#8fd9a8" dark>
+        <v-card-text>
+          ประมวลผล
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 <script>
+// ทำ date format dd/mm/yyyy datepicker
+function gettanggal(str) {
+  if (str != null) {
+    return (
+      str.substring(8, 10) +
+      '/' +
+      str.substring(5, 7) +
+      '/' +
+      str.substring(0, 4)
+    )
+  }
+  return ''
+}
 import axios from 'axios'
 export default {
   name: 'pui-admin',
   data() {
     return {
+      dialog: false,
       search: '',
       headers: [
+        {
+          text: 'ลำดับ',
+          sortable: true,
+          value: 'id',
+          width: '100px',
+        },
         {
           text: 'เวลาที่บันทึก',
           sortable: true,
           value: 'date_add',
-          width: '400px',
+          width: '250px',
         },
         { text: 'คำนำหน้า', sortable: false, value: 'prename', width: '150px' },
         { text: 'ชื่อ', sortable: false, value: 'name', width: '200px' },
@@ -105,6 +333,14 @@ export default {
       desserts: [],
       puidata: '',
       desserts_thai: '',
+      showdetail: false,
+      coltable: '12',
+
+      coldetail: '12',
+      pui_detail: '',
+      datecontactstring: '',
+      datecontact: '',
+      puicount: '',
     }
   },
   mounted() {
@@ -117,6 +353,8 @@ export default {
         .get(`${this.$axios.defaults.baseURL}pui.php`)
         .then((response) => {
           this.desserts = response.data
+          this.puicount = this.desserts.length
+          this.dialog = true
         })
     },
     async fecth_pui_thai() {
@@ -125,6 +363,78 @@ export default {
         .then((response) => {
           this.desserts_thai = response.data
         })
+    },
+    //click แถว
+    handleClick(value) {
+      // let cid = value.idcard.substring(1, 14)
+      let cid = value.idcard
+
+      axios
+        .get(`${this.$axios.defaults.baseURL}pui_detail.php`, {
+          params: {
+            idcard: cid,
+          },
+        })
+        .then((response) => {
+          this.pui_detail = response.data
+          // this.generic = generic_edit.map((item) => item.generic)
+          this.showdetail = true
+          this.coltable = '4'
+          this.coldetail = '8'
+          this.dialog = true
+        })
+    },
+    close() {
+      this.showdetail = false
+      this.coltable = '12'
+      this.coldetail = '12'
+      // this.dialog = true
+    },
+    searchtable() {
+      if (!this.datecontact) {
+        this.$swal({
+          title: 'ไม่สามารถค้นหาข้อมูลได้',
+          text: 'ยังไม่ได้ระบุวันที่',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        })
+      } else {
+        axios
+          .get(`${this.$axios.defaults.baseURL}pui_search.php`, {
+            params: {
+              datesearch: this.datecontact,
+            },
+          })
+          .then((response) => {
+            this.desserts = response.data
+            this.datecontact = null
+            this.datecontactstring = null
+            this.dialog = true
+          })
+
+        axios
+          .get(`${this.$axios.defaults.baseURL}pui_search_thai.php`, {
+            params: {
+              datesearch: this.datecontact,
+            },
+          })
+          .then((response) => {
+            this.desserts_thai = response.data
+          })
+      }
+    },
+    reload() {
+      this.fecth_pui()
+    },
+  },
+  watch: {
+    datecontact: function (val, oldVal) {
+      this.datecontactstring = gettanggal(val)
+    },
+    dialog(val) {
+      if (!val) return
+
+      setTimeout(() => (this.dialog = false), 300)
     },
   },
 }

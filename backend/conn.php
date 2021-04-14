@@ -1,12 +1,7 @@
 <?php
 
-// hospital
-// $servername = "192.168.5.187";
-// $username = "root";
-// $password = "123456";
-// $dbname = "leave";
-// $port = "3333";
-// // home
+
+ // home
 // $servername = "localhost";
 // $username = "root";
 // $password = "123456789";
