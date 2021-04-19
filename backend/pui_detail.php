@@ -29,6 +29,7 @@
       pui
     WHERE
       idcard LIKE  '".$idcard."'
+      
     
 
 

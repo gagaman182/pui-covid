@@ -68,10 +68,10 @@
         >
       </v-app-bar>
       <v-data-table
-        height="600px"
+        height="850px"
         :headers="headers"
         :items="desserts"
-        :items-per-page="15"
+        :items-per-page="20"
         class="elevation-1"
         :search="search"
         @click:row="handleClick"
@@ -85,39 +85,63 @@
     </v-col>
 
     <v-col v-if="showdetail" cols="12" :md="coldetail" style="overflow: auto">
-      <v-card color="#8e7f7f" dark>
+      <v-card style="height: 1040px">
         <v-row>
-          <v-col cols="12" md="6"
-            ><v-card-title primary class="title orange--text"
-              ><v-icon medium>mdi-shield-account </v-icon
-              >&nbsp;รายละเอียดบุคคล</v-card-title
-            ></v-col
-          >
-          <v-col cols="12" md="6" align="end">
-            <v-btn
-              :loading="loading"
-              x-large
-              class="ma-1"
-              color="#be0000"
-              @click="close"
-            >
-              <v-icon medium>mdi-close-outline </v-icon>
-            </v-btn></v-col
-          >
+          <v-col cols="12" md="12">
+            <v-app-bar color="#4b778d" dense dark>
+              <v-toolbar-title
+                ><v-icon medium>mdi-shield-account </v-icon
+                >&nbsp;รายละเอียดบุคคล</v-toolbar-title
+              >
+
+              <v-spacer></v-spacer>
+              <v-btn
+                :loading="loading"
+                x-large
+                class="ma-1"
+                color="#be0000"
+                @click="close"
+                align="end"
+              >
+                <v-icon medium>mdi-close-outline </v-icon>
+              </v-btn>
+            </v-app-bar>
+          </v-col>
         </v-row>
 
         <v-card-text>
           <v-row>
+            <v-col cols="12" md="6"
+              ><v-select
+                :items="state"
+                label="สถานะการติดตาม"
+                v-model="state_update"
+                solo
+              ></v-select>
+            </v-col>
+            <v-col cols="12" md="6"
+              ><v-btn
+                :loading="loading"
+                large
+                class="ma-1"
+                color="#5aa897"
+                @click="updatepui"
+                align="end"
+                dark
+              >
+                <v-icon medium>mdi-content-save </v-icon>
+              </v-btn>
+            </v-col>
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >ชื่อ-นามสกุล</v-card-subtitle
               >
-              <v-card-title class="headline">{{
+              <v-card-title class="headline headcolor">{{
                 pui_detail[0].fullname
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >หมายเลขบัตรประจำตัวประชาชน</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -125,7 +149,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >วันเกิด</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -133,7 +157,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="2"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >อายุ</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -141,7 +165,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >เบอร์โทรศัพท์</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -149,7 +173,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >บ้านเลขที่</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -157,7 +181,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >ถนน</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -166,7 +190,7 @@
             >
 
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >ซอย</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -174,7 +198,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >หมู่</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -182,7 +206,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >ตำบล</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -190,7 +214,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >อำเภอ</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -198,7 +222,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="3"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >จังหวัด</v-card-subtitle
               >
               <v-card-title class="headline">{{
@@ -207,7 +231,7 @@
             >
 
             <v-col cols="12" md="12"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >มาจากพื้นที่เสี่ยง/พื้นที่สีแดง</v-card-subtitle
               >
               <v-card-title class="subheadline">{{
@@ -215,7 +239,7 @@
               }}</v-card-title></v-col
             >
             <v-col cols="12" md="12"
-              ><v-card-subtitle class="text-decoration-underline orange--text"
+              ><v-card-subtitle class="text-decoration-underline blue--text"
                 >สัมมผัสใกล้ชิดกับผู้ป่วยที่ยืนยันเป็น Covid19</v-card-subtitle
               >
               <v-card-title class="subheadline">{{
@@ -341,6 +365,8 @@ export default {
       datecontactstring: '',
       datecontact: '',
       puicount: '',
+      state: ['NON PUI', 'LOW RISK', 'SQ', 'SWAB'],
+      state_update: '',
     }
   },
   mounted() {
@@ -426,6 +452,32 @@ export default {
     reload() {
       this.fecth_pui()
     },
+    updatepui() {
+      axios
+        .post(`${this.$axios.defaults.baseURL}update_pui.php`, {
+          state_update: this.state_update,
+          idcard: this.pui_detail[0].idcard,
+        })
+        .then((response) => {
+          this.message = response.data
+          if (this.message[0].message === 'เพิ่มข้อมูลสำเร็จ') {
+            this.$swal({
+              title: 'เพิ่มข้อมูลสำเร็จ',
+              text: 'สถานะการติดตามถูกเพิ่มแล้ว',
+              icon: 'success',
+              confirmButtonText: 'ตกลง',
+            })
+            this.fecth_pui()
+          } else {
+            this.$swal({
+              title: 'ไม่สามารถเพิ่มข้อมูลได้',
+              text: this.message[0].message,
+              icon: 'error',
+              confirmButtonText: 'ตกลง',
+            })
+          }
+        })
+    },
   },
   watch: {
     datecontact: function (val, oldVal) {
@@ -442,5 +494,8 @@ export default {
 <style>
 html {
   font-family: 'Prompt';
+}
+.headcolor {
+  color: '#ffd384';
 }
 </style>

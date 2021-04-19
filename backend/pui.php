@@ -31,6 +31,7 @@ DATE_FORMAT(date_add,'%d-%m-%Y %T') as date_add
 
 FROM
  pui
+ WHERE state = ''
  order by date_add desc
  ";
 

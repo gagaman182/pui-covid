@@ -54,7 +54,7 @@ export default {
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         //home
-        //baseURL: 'http://localhost/pui-covid19v2/backend/',
+        //baseURL: 'http://localhost/pui-covid19/backend/',
         //takis
         baseURL: 'http://61.19.25.207/pui-covid19/backend/',
     },
